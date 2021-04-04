@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block headContent %}
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div id="header" class="navbar border-bottom border-2 border-light text-light bg-dark">
+        <div class="container">
+            <h2 class="display-5 text-center p-sm-0 pb-2">Image Captioning and Speech</h2>
+            <a href="https://github.com/iambpn/PhotoAlbum" target="_blank" class="btn btn-success mx-sm-0 mx-auto">Download App</a>
+        </div>
+    </div>
+
+    <div class="container-sm">
+        <div style="position: relative; height: 50vh;">
+            <div style="position:absolute; bottom: 0; width: 100%">
+                <h1 class="text-center p-sm-0 p-3">Welcome to Image captioning and speech.</h1>
+                <h4 class="text-center">This site and server are up and running. </h4>
+            </div>
+        </div>
+    </div>
+{% endblock %}
