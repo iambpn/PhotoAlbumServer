@@ -1,21 +1,13 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template
 import json
 from PIL import Image
 import io
 import base64
-
-from AI_Model.Prediction import greedyPrediction
-from AI_Model.ImageEncoder import encodeImage, getVggModel
-from AI_Model.CaptionDecoder import getCaptionModel
-from AI_Model.Load_Tokenization import loadTokenization
+from AI_Model.ImgCap import ImgCap
 
 app = Flask(__name__)
 supported_type = ['image/png', 'image/jpeg']
-word_to_idx, idx_to_word = None, None
-max_length = 37
-captionModelPath = "AI_Model/Model/model-val_loss2.858.h5"
-word_to_idx_path = "AI_Model/Tokenization/word_index_37.pkl"
-idx_to_word_path = "AI_Model/Tokenization/index_word_37.pkl"
+img_cap = None
 
 
 @app.route('/', methods=['GET'])
@@ -28,21 +20,19 @@ def prediction():
     if request.method == 'POST':
 
         string_encoded_image: str = request.form.get("encodedImage", None)
+
         if string_encoded_image is not None:
 
             # May cause exception while converting in image string encoded data is not passed
             try:
                 image = Image.open(io.BytesIO(base64.decodebytes(string_encoded_image.encode())))
+                # to save the image
+                open("image.jpg", "wb").write(base64.decodebytes(string_encoded_image.encode()))
             except Exception as ex:
                 print(ex)
                 return {"Error": "Data not Recognized. \n This exception is caused by " + str(ex)}, 400
 
-            image_vector = encodeImage(image)
-            cap_model = getCaptionModel(captionModelPath)
-            caption, _ = greedyPrediction(cap_model, word_to_idx, idx_to_word, image_vector, max_length)
-
-            # clean Caption
-            caption = caption.replace("startseq", "").replace("endseq", "").strip()
+            caption = img_cap.get_image_caption(image)
 
             # success return
             print("Success")
@@ -63,15 +53,9 @@ def exception(ex):
         return render_template('404.html')
 
 
-# loading Word_to_index and index_to_word
-word_to_idx, idx_to_word = loadTokenization(word_to_idx_path, idx_to_word_path)
-
-# Loading model before prediction
-getVggModel()
-getCaptionModel(captionModelPath)
-print("Model Loaded\n")
+if img_cap is None:
+    img_cap = ImgCap()
 
 if __name__ == '__main__':
     # start app
     app.run()
-

@@ -1,0 +1,8 @@
+*.jpg
+*.jpeg
+*.png
+
+# do not ignore
+!static/*/*.jpg
+!static/*/*.jpeg
+!static/*/*.png
