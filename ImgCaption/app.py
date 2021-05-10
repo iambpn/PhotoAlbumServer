@@ -27,7 +27,7 @@ def prediction():
             try:
                 image = Image.open(io.BytesIO(base64.decodebytes(string_encoded_image.encode())))
                 # to save the image
-                open("image.jpg", "wb").write(base64.decodebytes(string_encoded_image.encode()))
+                #open("image.jpg", "wb").write(base64.decodebytes(string_encoded_image.encode()))
             except Exception as ex:
                 print(ex)
                 return {"Error": "Data not Recognized. \n This exception is caused by " + str(ex)}, 400
